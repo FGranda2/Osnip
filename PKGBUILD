@@ -19,7 +19,7 @@ depends=('wayland' 'libxkbcommon' 'mesa' 'libdrm' 'expat' 'slurp' 'wl-clipboard'
 optdepends=('libnotify: desktop notifications when copying or saving a pin')
 makedepends=('rust' 'cargo' 'pkgconf')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('4931e1e62789c16877fb9531caa3871c805b17f0c3c0ced626b8547f754caaf0')
+sha256sums=('808da0897c42e5d0acf939575f9bdfc918839f54af97a506f312f86de7c00cd4')
 
 prepare() {
   cd "$_repo-$pkgver"
