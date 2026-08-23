@@ -1,6 +1,6 @@
 [Unit]
 Description=Osnip Wayland pin daemon
-Documentation=https://github.com/franciscogranda/osnip
+Documentation=https://github.com/FGranda2/Osnip
 PartOf=graphical-session.target
 After=graphical-session.target
 

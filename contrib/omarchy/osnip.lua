@@ -4,7 +4,7 @@
 -- window rules and a keybinding. Capture, clipboard pinning, closing
 -- pins, and per-pin actions all live in the Osnip bar plugin:
 --
---     omarchy plugin add https://github.com/franciscogranda/Osnip.git --enable
+--     omarchy plugin add https://github.com/FGranda2/Osnip.git --enable
 --
 -- Install:
 --     install -Dm644 contrib/omarchy/osnip.lua ~/.config/hypr/osnip.lua

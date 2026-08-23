@@ -235,7 +235,7 @@ into an event stream.
 
 ```console
 $ printf '{"kind":"subscribe"}\n' | socat - UNIX-CONNECT:$XDG_RUNTIME_DIR/osnip.sock
-{"kind":"hello","protocol":2,"version":"0.2.0","capabilities":["subscribe","pin_action","thumbnails"]}
+{"kind":"hello","protocol":2,"version":"0.2.1","capabilities":["subscribe","pin_action","thumbnails"]}
 {"kind":"ok"}
 {"kind":"event","event":"pins_changed","pins":[]}
 ```

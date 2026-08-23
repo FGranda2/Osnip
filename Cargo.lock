@@ -2500,7 +2500,7 @@ dependencies = [
 
 [[package]]
 name = "osnip-cli"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "clap",
@@ -2513,7 +2513,7 @@ dependencies = [
 
 [[package]]
 name = "osnip-core"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -2524,7 +2524,7 @@ dependencies = [
 
 [[package]]
 name = "osnip-daemon"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "chrono",
