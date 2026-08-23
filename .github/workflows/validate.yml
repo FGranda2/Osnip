@@ -25,11 +25,39 @@ jobs:
         with:
           components: clippy, rustfmt
       - uses: Swatinem/rust-cache@v2
-      # The daemon links Wayland, xkbcommon, and a GPU stack through iced.
+      # Every system library the dependency tree probes with pkg-config,
+      # derived by scanning all 319 build scripts rather than guessing:
+      #   egl                                -> libegl-dev      (r-egl, khronos-egl)
+      #   libdrm                             -> libdrm-dev      (drm-sys)
+      #   wayland-{client,cursor,egl,server} -> libwayland-dev  (wayland-sys)
+      #   xkbcommon                          -> libxkbcommon-dev
+      # gbm is linked rather than probed, so it needs its -dev package too.
+      # No bindgen in the tree, so no libclang is required.
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwayland-dev libxkbcommon-dev pkg-config
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libegl-dev \
+            libdrm-dev \
+            libgbm-dev
+
+      # Fail here, with the missing package named, rather than several
+      # minutes into a build script panic that only says "egl not found".
+      - name: Verify pkg-config prerequisites
+        run: |
+          missing=0
+          for pc in egl libdrm wayland-client wayland-cursor wayland-egl wayland-server xkbcommon; do
+            if pkg-config --exists "$pc"; then
+              printf '%-16s %s\n' "$pc" "$(pkg-config --modversion "$pc")"
+            else
+              echo "::error::missing pkg-config package: $pc"
+              missing=1
+            fi
+          done
+          exit $missing
       # Capture and clipboard need a live Wayland session and are covered
       # manually; everything else — framing, IPC, registry, thumbnails —
       # runs headless.
