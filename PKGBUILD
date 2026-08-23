@@ -4,12 +4,18 @@ pkgver=0.2.0
 pkgrel=1
 pkgdesc="Snipaste-style screen pinning for wlroots-style Wayland compositors (Niri, Hyprland/Omarchy)"
 arch=('x86_64' 'aarch64')
-url="https://github.com/franciscogranda/Osnip"
-license=('MIT' 'Apache-2.0')
-depends=('slurp' 'wl-clipboard' 'libnotify' 'wayland' 'libxkbcommon' 'vulkan-icd-loader')
+url="https://github.com/FGranda2/Osnip"
+license=('MIT')
+# Linked directly (ldd): expat, libdrm, mesa. Resolved at runtime via
+# dlopen, so invisible to ldd but still required: libwayland-client
+# (wayland), libxkbcommon, libEGL (mesa). slurp and wl-clipboard are
+# executed, not linked.
+depends=('wayland' 'libxkbcommon' 'mesa' 'libdrm' 'expat' 'slurp' 'wl-clipboard')
+# Copy and save work without it; they just produce no desktop toast.
+optdepends=('libnotify: desktop notifications when copying or saving a pin')
 makedepends=('rust' 'cargo' 'pkgconf')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('SKIP')  # replaced by updpkgsums after the tag is pushed
 
 prepare() {
   cd "$pkgname-$pkgver"

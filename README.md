@@ -45,7 +45,7 @@ saving a file.
 One command. The plugin installs the daemon for you if it is missing:
 
 ```fish
-omarchy plugin add https://github.com/franciscogranda/Osnip.git --enable
+omarchy plugin add https://github.com/FGranda2/Osnip.git --enable
 ```
 
 Then open the panel from the bar icon; if the daemon is absent it offers
