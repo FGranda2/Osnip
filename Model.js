@@ -7,7 +7,7 @@
 // omarchy-shell process, so a logic bug that throws would degrade the
 // user's whole bar — which is exactly the code worth unit-testing.
 
-var PLUGIN_ID = "io.github.franciscogranda.osnip"
+var PLUGIN_ID = "io.github.fgranda2.osnip"
 
 // Protocol version this panel is written against. The daemon announces
 // its own in the `hello` line; see osnip's crates/osnip-core.

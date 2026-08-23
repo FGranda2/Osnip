@@ -167,8 +167,8 @@ Both fields are optional; missing fields fall back to the defaults shown. The
 | `thumbnailColumns` | `3` | Previews per row in the panel (1–5) |
 
 ```fish
-omarchy bar set io.github.franciscogranda.osnip thumbnailColumns 4
-omarchy bar move io.github.franciscogranda.osnip --section right
+omarchy bar set io.github.fgranda2.osnip thumbnailColumns 4
+omarchy bar move io.github.fgranda2.osnip --section right
 ```
 
 ## Repository layout
@@ -291,7 +291,7 @@ Omarchy installs plugins as git checkouts and never pulls them, so updates
 are explicit:
 
 ```fish
-omarchy plugin update io.github.franciscogranda.osnip
+omarchy plugin update io.github.fgranda2.osnip
 omarchy restart shell
 ```
 
@@ -300,7 +300,7 @@ re-execute QML the shell has already loaded. Updating the daemon is separate
 (`omarchy pkg aur add osnip`), and the running daemon keeps the old binary
 until it is restarted or the session ends.
 
-To remove the plugin: `omarchy plugin remove io.github.franciscogranda.osnip`.
+To remove the plugin: `omarchy plugin remove io.github.fgranda2.osnip`.
 That leaves the daemon and your saved screenshots alone.
 
 ## Development
@@ -321,10 +321,10 @@ delegate degrades the whole bar.
 To try a local checkout without going through git:
 
 ```fish
-mkdir -p ~/.config/omarchy/plugins/io.github.franciscogranda.osnip
-cp manifest.json Model.js *.qml ~/.config/omarchy/plugins/io.github.franciscogranda.osnip/
+mkdir -p ~/.config/omarchy/plugins/io.github.fgranda2.osnip
+cp manifest.json Model.js *.qml ~/.config/omarchy/plugins/io.github.fgranda2.osnip/
 omarchy-shell shell rescanPlugins
-omarchy plugin enable io.github.franciscogranda.osnip --section right
+omarchy plugin enable io.github.fgranda2.osnip --section right
 omarchy restart shell
 ```
 

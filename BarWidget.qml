@@ -14,7 +14,7 @@ import "Model.js" as Model
 // decoration — see the note above `opened`.
 BarWidget {
   id: root
-  moduleName: "io.github.franciscogranda.osnip"
+  moduleName: "io.github.fgranda2.osnip"
 
   // The Loader creates the panel before the host has finished injecting
   // our own properties, so the wiring is re-run whenever either side

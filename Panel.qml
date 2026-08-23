@@ -19,8 +19,8 @@ import "Model.js" as Model
 // This file draws; it does not decide.
 Panel {
   id: root
-  moduleName: "io.github.franciscogranda.osnip"
-  ipcTarget: "io.github.franciscogranda.osnip"
+  moduleName: "io.github.fgranda2.osnip"
+  ipcTarget: "io.github.fgranda2.osnip"
 
   property var anchorItem: null
   property var hostWidget: null
