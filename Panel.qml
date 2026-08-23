@@ -37,6 +37,10 @@ Panel {
   property bool cursorActive: false
   property real nowMs: Date.now()
 
+  // Socket-level liveness, read off whichever Socket instance is
+  // currently mounted. `state.connected` means "handshake completed";
+  // this means "the file descriptor is open".
+  readonly property bool socketAlive: socketLoader.item ? socketLoader.item.connected === true : false
   readonly property bool backendConnected: state.connected === true
   readonly property var pins: state.pins || []
   readonly property int pinTotal: pins.length
@@ -60,16 +64,24 @@ Panel {
 
   // ------------------------------------------------------- connection
 
+  // Quickshell's Socket cannot be reconnected once it has dropped:
+  // assigning `connected = true` to a used instance is silently ignored
+  // — no error, no signal, no connection. The daemon is spawned on the
+  // first capture and restarts across upgrades, so "reconnect after the
+  // peer goes away" is the normal case, not an edge case. Mounting a
+  // fresh Socket per attempt is the only thing that actually works.
   function connectBackend() {
-    if (backendSocket.connected || root.socketPath === "") return
-    if (!root.backendInstalled) return
-    backendSocket.connected = true
+    if (root.socketPath === "" || !root.backendInstalled) return
+    if (root.socketAlive) return
+    socketLoader.active = false
+    socketLoader.active = true
   }
 
   function send(payload) {
-    if (!backendSocket.connected) return false
-    backendSocket.write(payload + "\n")
-    backendSocket.flush()
+    var sock = socketLoader.item
+    if (!sock || !sock.connected) return false
+    sock.write(payload + "\n")
+    sock.flush()
     return true
   }
 
@@ -178,30 +190,39 @@ Panel {
 
   // ------------------------------------------------------- processes
 
-  Socket {
-    id: backendSocket
-    path: root.socketPath
-    connected: false
-    parser: SplitParser {
-      splitMarker: "\n"
-      onRead: function (line) { root.handleLine(line) }
-    }
-    onConnectedChanged: {
-      if (connected) {
-        root.reconnectDelay = root.reconnectMin
-        // Subscribing is also what selects the NDJSON framing: the
-        // leading `{` is the discriminator the daemon reads.
-        root.send(Model.subscribeRequest())
-      } else {
-        // Nothing imperative here: reconnectTimer's `running` is bound
-        // to this socket's state, and calling restart() would replace
-        // that binding with a one-shot value — which is exactly how a
-        // daemon started after the shell ended up never being noticed.
-        root.state = Model.emptyState()
+  Loader {
+    id: socketLoader
+    active: false
+    sourceComponent: Component {
+      Socket {
+        path: root.socketPath
+        // Connect as soon as the instance exists; connectBackend()
+        // controls *when* an instance exists.
+        connected: true
+        parser: SplitParser {
+          splitMarker: "\n"
+          onRead: function (line) { root.handleLine(line) }
+        }
+        onConnectedChanged: {
+          if (connected) {
+            root.reconnectDelay = root.reconnectMin
+            // Write through this instance rather than root.send(): this
+            // signal fires while the Loader is still constructing us, so
+            // socketLoader.item is null and send() would silently drop
+            // the line. That matters more than it looks — the daemon
+            // picks its framing from the client's *first byte*, so a
+            // dropped subscribe means it never sends `hello`, and the
+            // panel waits forever on a socket that is genuinely open.
+            write(Model.subscribeRequest() + "\n")
+            flush()
+          } else {
+            root.state = Model.emptyState()
+          }
+        }
+        onError: function (error) {
+          root.state = Model.emptyState()
+        }
       }
-    }
-    onError: function (error) {
-      backendSocket.connected = false
     }
   }
 
@@ -222,7 +243,7 @@ Panel {
     id: reconnectTimer
     interval: root.reconnectDelay
     repeat: true
-    running: root.backendInstalled && !backendSocket.connected
+    running: root.backendInstalled && !root.socketAlive
     onTriggered: {
       root.reconnectDelay = Math.min(root.reconnectMax, root.reconnectDelay * 2)
       root.connectBackend()

@@ -303,6 +303,38 @@ test("the bar host's widget contract is fully forwarded", () => {
   }
 })
 
+test("the socket is recreated per attempt, never reused", () => {
+  // Quickshell's Socket cannot be reconnected once it has dropped:
+  // assigning `connected = true` to a used instance is silently ignored,
+  // with no error and no signal. The daemon is spawned on first capture
+  // and restarts across upgrades, so reconnecting is the normal case —
+  // a reused Socket means the bar goes stale until the shell restarts.
+  const qml = read("Panel.qml")
+  assert.match(qml, /socketLoader\.active = false\s*\n\s*socketLoader\.active = true/,
+    "connectBackend must remount the Loader to get a fresh Socket")
+  assert.doesNotMatch(qml, /\bbackendSocket\b/,
+    "a singleton Socket id is the reuse pattern that cannot reconnect")
+})
+
+test("the subscribe line is written through the socket instance, not root.send()", () => {
+  // onConnectedChanged fires while the Loader is still constructing the
+  // Socket, so socketLoader.item is null and root.send() would drop the
+  // line. The daemon picks its framing from the client's first byte, so
+  // a dropped subscribe means no `hello` ever arrives and the panel
+  // waits forever on a socket that is genuinely open.
+  const qml = read("Panel.qml")
+  const handler = qml
+    .slice(qml.indexOf("onConnectedChanged"), qml.indexOf("onError"))
+    // Strip comments: the block explains why root.send() is wrong here,
+    // and prose must not trip the assertion below.
+    .replace(/\/\/.*$/gm, "")
+  assert.ok(handler.length > 0, "could not locate onConnectedChanged")
+  assert.match(handler, /write\(Model\.subscribeRequest\(\)/,
+    "subscribe must be written through the instance")
+  assert.doesNotMatch(handler, /root\.send\(/,
+    "root.send() reads socketLoader.item, which is null at this point")
+})
+
 test("settings declared in the manifest are the ones the QML reads", () => {
   const manifest = JSON.parse(read("manifest.json"))
   const qml = read("BarWidget.qml") + read("Panel.qml")
