@@ -4,7 +4,7 @@ pkgname=osnip
 # while an AUR pkgname must be lowercase — so the extracted directory is
 # not "$pkgname-$pkgver" and every build step has to cd here instead.
 _repo=Osnip
-pkgver=0.2.1
+pkgver=0.2.2
 pkgrel=1
 pkgdesc="Snipaste-style screen pinning for wlroots-style Wayland compositors (Niri, Hyprland/Omarchy)"
 arch=('x86_64' 'aarch64')
@@ -19,7 +19,7 @@ depends=('wayland' 'libxkbcommon' 'mesa' 'libdrm' 'expat' 'slurp' 'wl-clipboard'
 optdepends=('libnotify: desktop notifications when copying or saving a pin')
 makedepends=('rust' 'cargo' 'pkgconf')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('f99a68ab9dd001277829fef882ff79724fab9cb46746ce3a0430f1d271e0f544')
+sha256sums=('4931e1e62789c16877fb9531caa3871c805b17f0c3c0ced626b8547f754caaf0')
 
 prepare() {
   cd "$_repo-$pkgver"

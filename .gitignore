@@ -8,3 +8,13 @@
 
 node_modules/
 *.log
+
+# makepkg / updpkgsums leave build artefacts and downloaded sources in the
+# working directory. They must never be committed: they would ship inside
+# the next release tarball, which is how a 4.5 MB copy of the previous
+# release once ended up inside its successor.
+*.tar.gz
+*.tar.zst
+*.pkg.tar.*
+/src/
+/pkg/

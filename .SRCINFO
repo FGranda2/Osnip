@@ -1,6 +1,6 @@
 pkgbase = osnip
 	pkgdesc = Snipaste-style screen pinning for wlroots-style Wayland compositors (Niri, Hyprland/Omarchy)
-	pkgver = 0.2.0
+	pkgver = 0.2.1
 	pkgrel = 1
 	url = https://github.com/FGranda2/Osnip
 	arch = x86_64
@@ -17,7 +17,7 @@ pkgbase = osnip
 	depends = slurp
 	depends = wl-clipboard
 	optdepends = libnotify: desktop notifications when copying or saving a pin
-	source = osnip-0.2.0.tar.gz::https://github.com/FGranda2/Osnip/archive/refs/tags/v0.2.0.tar.gz
-	sha256sums = f99a68ab9dd001277829fef882ff79724fab9cb46746ce3a0430f1d271e0f544
+	source = osnip-0.2.1.tar.gz::https://github.com/FGranda2/Osnip/archive/refs/tags/v0.2.1.tar.gz
+	sha256sums = 4931e1e62789c16877fb9531caa3871c805b17f0c3c0ced626b8547f754caaf0
 
 pkgname = osnip
