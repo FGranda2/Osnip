@@ -1,0 +1,34 @@
+// osnip — drop these into your ~/.config/niri/config.kdl.
+//
+// `app-id="^osnip-pin$"` is the literal value baked into the
+// daemon (see crates/osnip-daemon/src/app.rs:: PIN_APP_ID).
+//
+// Reload niri after editing:
+//     niri msg action reload-config
+
+// Make every pin window land in Niri's floating layer (always-on-top
+// over tiled windows on the same workspace).
+window-rule {
+    match app-id="^osnip-pin$"
+    open-floating true
+}
+
+// Optional: anchor newly opened pins to the top-right corner of the
+// monitor instead of the compositor's default placement, so a flurry
+// of captures doesn't stack at (0,0).
+//
+// window-rule {
+//     match app-id="^osnip-pin$"
+//     default-floating-position x=32 y=32 relative-to="top-right"
+// }
+
+// Capture keybind. Bind whichever modifier you prefer.
+binds {
+    Mod+Shift+S { spawn "osnip" "capture"; }
+
+    // Optional: pin the clipboard's current image.
+    // Mod+Shift+V { spawn "osnip" "clipboard"; }
+
+    // Optional: nuke every pin.
+    // Mod+Shift+X { spawn "osnip" "close-all"; }
+}

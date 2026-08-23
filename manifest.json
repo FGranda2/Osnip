@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.franciscogranda.osnip",
+  "name": "Osnip: Screen Pinning for Omarchy",
+  "version": "1.0.0",
+  "author": "Francisco Granda",
+  "license": "MIT",
+  "description": "Pin screenshots on top of your desktop. Live pin count in the bar, thumbnails and per-pin actions in the panel.",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Osnip",
+    "description": "Capture a region, pin it on screen, and manage every live pin from the bar.",
+    "category": "Utilities",
+    "aliases": ["osnip", "osnip", "pins"],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "showCountBadge": "On",
+      "thumbnailColumns": 3
+    },
+    "schema": [
+      {
+        "key": "showCountBadge",
+        "type": "enum",
+        "label": "Show pin count badge",
+        "options": ["On", "Off"],
+        "defaultValue": "On",
+        "description": "Overlay the number of live pins on the bar icon."
+      },
+      {
+        "key": "thumbnailColumns",
+        "type": "integer",
+        "label": "Thumbnail columns",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "defaultValue": 3,
+        "description": "How many pin previews to show per row in the panel."
+      }
+    ]
+  }
+}

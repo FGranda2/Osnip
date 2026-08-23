@@ -1,0 +1,22 @@
+[Unit]
+Description=Osnip Wayland pin daemon
+Documentation=https://github.com/franciscogranda/osnip
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/osnip-daemon
+Restart=on-failure
+RestartSec=2
+# The daemon needs WAYLAND_DISPLAY and XDG_RUNTIME_DIR. These are
+# inherited from the user-systemd environment, which most session
+# managers populate automatically -- Omarchy's Hyprland autostart
+# imports the whole session environment on login, so nothing extra is
+# needed there. If the daemon exits at startup with
+# "XDG_RUNTIME_DIR is unset" or fails to connect to Wayland, run this
+# once from inside the compositor session:
+#     systemctl --user import-environment WAYLAND_DISPLAY XDG_RUNTIME_DIR XDG_CURRENT_DESKTOP
+
+[Install]
+WantedBy=graphical-session.target

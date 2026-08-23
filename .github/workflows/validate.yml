@@ -1,0 +1,72 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/model.test.js
+
+  daemon:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      # The daemon links Wayland, xkbcommon, and a GPU stack through iced.
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwayland-dev libxkbcommon-dev pkg-config
+      # Capture and clipboard need a live Wayland session and are covered
+      # manually; everything else — framing, IPC, registry, thumbnails —
+      # runs headless.
+      - run: cargo test --workspace
+      - run: cargo clippy --workspace --all-targets
+      - run: cargo fmt --all --check
+
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # A cut-down stand-in for `omarchy plugin validate`, which is not
+      # installable on a runner. The rules mirror the checks in
+      # omarchy-plugin-validate and shell/services/PluginRegistry.qml.
+      - name: Check manifest against the plugin schema
+        run: |
+          set -euo pipefail
+          jq -e '.schemaVersion == 1' manifest.json >/dev/null
+          for field in id name version kinds entryPoints; do
+            jq -e --arg f "$field" 'has($f)' manifest.json >/dev/null
+          done
+          id=$(jq -r '.id' manifest.json)
+          [[ $id =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]
+          [[ $id != omarchy.* ]]
+          jq -e '(.kinds | type) == "array" and (.kinds | length) > 0' manifest.json >/dev/null
+          jq -e '(.entryPoints | type) == "object"' manifest.json >/dev/null
+          jq -e '(.kinds | index("bar-widget")) == null or (.entryPoints | has("barWidget"))' manifest.json >/dev/null
+          jq -e '(.barWidget.defaultSection // "center") as $s
+                 | ["left","center","right"] | index($s) != null' manifest.json >/dev/null
+          while IFS= read -r ep; do
+            [[ $ep != /* ]]
+            [[ $ep != *".."* ]]
+            test -f "$ep"
+          done < <(jq -r '.entryPoints[]' manifest.json)
+      # The shell refuses to load a plugin folder containing symlinks,
+      # so a repo that grows one should fail here, not on a user's bar.
+      - name: Refuse symlinks
+        run: |
+          found=$(find . -path ./.git -prune -o -type l -print)
+          if [[ -n $found ]]; then echo "symlinks are not allowed: $found" >&2; exit 1; fi

@@ -1,0 +1,10 @@
+# Cargo build output. This matters more than usual here: `omarchy plugin
+# add` clones the whole repo into ~/.config/omarchy/plugins/, and the
+# shell hot-reloads plugin code whenever any file under that directory
+# changes — a target/ dir there would trigger a reload storm on every
+# build. Build from a separate clone, never from the installed copy.
+/target
+**/*.rs.bk
+
+node_modules/
+*.log

@@ -1,0 +1,26 @@
+[package]
+name = "osnip-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Osnip CLI: thin client that talks to osnip-daemon over a Unix socket."
+
+[[bin]]
+name = "osnip"
+path = "src/main.rs"
+
+[lints.rust]
+warnings = "deny"
+
+[dependencies]
+osnip-core = { path = "../osnip-core" }
+anyhow = { workspace = true }
+clap = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
